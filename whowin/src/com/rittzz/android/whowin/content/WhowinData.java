@@ -8,5 +8,5 @@ public class WhowinData {
 
     static final String AUTHORITY = MainContentProvider.AUTHORITY;
 
-    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/whowin");
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 }

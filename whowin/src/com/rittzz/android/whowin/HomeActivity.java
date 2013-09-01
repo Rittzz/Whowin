@@ -1,22 +1,18 @@
 package com.rittzz.android.whowin;
 
 import android.os.Bundle;
-import android.app.Activity;
-import android.view.Menu;
 
-public class HomeActivity extends Activity {
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.rittzz.android.whowin.content.TestData;
+
+public class HomeActivity extends SherlockFragmentActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
+        TestData.addGameTableEntries(this);
     }
 
 }

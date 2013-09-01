@@ -4,14 +4,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.rittzz.android.whowin.util.Logging;
@@ -20,174 +18,111 @@ public class MainContentProvider extends ContentProvider {
 
     private static final String LOG_TAG = Logging.makeLogTag(MainContentProvider.class);
 
-	// database
-	private MainDatabaseHelper database;
-
-	// Used for the UriMacher
-	private static final int WHOWINS = 10;
-	private static final int WHOWIN_ID = 20;
-
     static final String AUTHORITY = "com.rittz.android.whowin.contentprovider";
 
-	private static final String BASE_PATH = "whowin";
-	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-			+ "/" + BASE_PATH);
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
-	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-			+ "/whowins";
-	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-			+ "/whowin";
+    // UriMacher Values
+    private static final int SPORTS = 10;
 
-	private static final UriMatcher sURIMatcher = new UriMatcher(
-			UriMatcher.NO_MATCH);
+    private static final int SPORTS_ID_PLAYERS = 20;
+    private static final int SPORTS_ID_PLAYER_ID = 21;
 
-	static {
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH, WHOWINS);
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", WHOWIN_ID);
-	}
+    private static final int SPORTS_ID_GAMES = 30;
+    private static final int SPORTS_ID_GAME_ID = 31;
 
-	@Override
-	public boolean onCreate() {
-		database = new MainDatabaseHelper(getContext());
-		return false;
-	}
+    private static final int SPORTS_ID_STATS = 40;
 
-	@Override
-	public Cursor query(final Uri uri, final String[] projection, final String selection,
-			final String[] selectionArgs, final String sortOrder) {
+    private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
-	    Log.d(LOG_TAG, "Incoming URI: " + uri);
+    // UriMatcher Setup
+    static {
+        sURIMatcher.addURI(AUTHORITY, "sports", SPORTS);
 
-		// Using SQLiteQueryBuilder instead of query() method
-		final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        sURIMatcher.addURI(AUTHORITY, "sports/#/players", SPORTS_ID_PLAYERS);
+        sURIMatcher.addURI(AUTHORITY, "sports/#/player/#", SPORTS_ID_PLAYER_ID);
 
-		// Check if the caller has requested a column which does not exists
-		checkColumns(projection);
+        sURIMatcher.addURI(AUTHORITY, "sports/#/games", SPORTS_ID_GAMES);
+        sURIMatcher.addURI(AUTHORITY, "sports/#/game/#", SPORTS_ID_GAME_ID);
 
-		// Set the table
-		queryBuilder.setTables(GameTable.TABLE_NAME);
+        sURIMatcher.addURI(AUTHORITY, "sports/#/stats", SPORTS_ID_STATS);
+    }
 
-		final int uriType = sURIMatcher.match(uri);
-		switch (uriType) {
-		case WHOWINS:
-			break;
-		case WHOWIN_ID:
-			// Adding the ID to the original query
-			queryBuilder.appendWhere(GameTable.COLUMN_ID + "="
-					+ uri.getLastPathSegment());
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown URI: " + uri);
-		}
+    // Database
+    private MainDatabaseHelper database;
 
-		final SQLiteDatabase db = database.getWritableDatabase();
-		final Cursor cursor = queryBuilder.query(db, projection, selection,
-				selectionArgs, null, null, sortOrder);
-		// Make sure that potential listeners are getting notified
-		cursor.setNotificationUri(getContext().getContentResolver(), uri);
+    @Override
+    public boolean onCreate() {
+        database = MainDatabaseHelper.getInstance(getContext());
+        return true;
+    }
 
-		return cursor;
-	}
+    @Override
+    public Cursor query(final Uri uri, final String[] projection, final String selection,
+        final String[] selectionArgs, final String sortOrder) {
 
-	@Override
-	public String getType(final Uri uri) {
-		return null;
-	}
+        Log.d(LOG_TAG, "Incoming Query URI: " + uri);
 
-	@Override
-	public Uri insert(final Uri uri, final ContentValues values) {
-	    Log.d(LOG_TAG, "Incoming URI: " + uri);
+        // Using SQLiteQueryBuilder instead of query() method
+        final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
-		final int uriType = sURIMatcher.match(uri);
-		final SQLiteDatabase sqlDB = database.getWritableDatabase();
-		final int rowsDeleted = 0;
-		long id = 0;
-		switch (uriType) {
-		case WHOWINS:
-			id = sqlDB.insert(GameTable.TABLE_NAME, null, values);
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown URI: " + uri);
-		}
-		getContext().getContentResolver().notifyChange(uri, null);
-		return Uri.parse(BASE_PATH + "/" + id);
-	}
+        // Check if the caller has requested a column which does not exists
+        checkColumns(projection);
 
-	@Override
-	public int delete(final Uri uri, final String selection, final String[] selectionArgs) {
-	    Log.d(LOG_TAG, "Incoming URI: " + uri);
+        // Set the table
+        queryBuilder.setTables(SportTable.TABLE_NAME);
 
-		final int uriType = sURIMatcher.match(uri);
-		final SQLiteDatabase sqlDB = database.getWritableDatabase();
-		int rowsDeleted = 0;
-		switch (uriType) {
-		case WHOWINS:
-			rowsDeleted = sqlDB.delete(GameTable.TABLE_NAME, selection,
-					selectionArgs);
-			break;
-		case WHOWIN_ID:
-			final String id = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection)) {
-				rowsDeleted = sqlDB.delete(GameTable.TABLE_NAME,
-						GameTable.COLUMN_ID + "=" + id, null);
-			} else {
-				rowsDeleted = sqlDB.delete(GameTable.TABLE_NAME,
-						GameTable.COLUMN_ID + "=" + id + " and " + selection,
-						selectionArgs);
-			}
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown URI: " + uri);
-		}
-		getContext().getContentResolver().notifyChange(uri, null);
-		return rowsDeleted;
-	}
+        final int uriType = sURIMatcher.match(uri);
+        switch (uriType) {
+        case SPORTS:
+            // Query the sports DP here
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown URI: " + uri);
+        }
 
-	@Override
-	public int update(final Uri uri, final ContentValues values, final String selection,
-			final String[] selectionArgs) {
+        final SQLiteDatabase db = database.getWritableDatabase();
+        final Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null,
+            null, sortOrder);
 
-		final int uriType = sURIMatcher.match(uri);
-		final SQLiteDatabase sqlDB = database.getWritableDatabase();
-		int rowsUpdated = 0;
-		switch (uriType) {
-		case WHOWINS:
-			rowsUpdated = sqlDB.update(GameTable.TABLE_NAME, values, selection,
-					selectionArgs);
-			break;
-		case WHOWIN_ID:
-			final String id = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection)) {
-				rowsUpdated = sqlDB.update(GameTable.TABLE_NAME, values,
-						GameTable.COLUMN_ID + "=" + id, null);
-			} else {
-				rowsUpdated = sqlDB.update(GameTable.TABLE_NAME, values,
-						GameTable.COLUMN_ID + "=" + id + " and " + selection,
-						selectionArgs);
-			}
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown URI: " + uri);
-		}
-		getContext().getContentResolver().notifyChange(uri, null);
-		return rowsUpdated;
-	}
+        // Make sure that potential listeners are getting notified
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
-	private void checkColumns(final String[] projection) {
-		final String[] available = {
-				GameTable.COLUMN_NAME, GameTable.COLUMN_DESCRIPTION,
-				GameTable.COLUMN_ID };
-		if (projection != null) {
-			final HashSet<String> requestedColumns = new HashSet<String>(
-					Arrays.asList(projection));
-			final HashSet<String> availableColumns = new HashSet<String>(
-					Arrays.asList(available));
-			// Check if all columns which are requested are available
-			if (!availableColumns.containsAll(requestedColumns)) {
-				throw new IllegalArgumentException(
-						"Unknown columns in projection");
-			}
-		}
-	}
+        return cursor;
+    }
+
+    @Override
+    public String getType(final Uri uri) {
+        return null;
+    }
+
+    @Override
+    public Uri insert(final Uri uri, final ContentValues values) {
+        throw new UnsupportedOperationException("The " + CONTENT_URI + " is read only");
+    }
+
+    @Override
+    public int delete(final Uri uri, final String selection, final String[] selectionArgs) {
+        throw new UnsupportedOperationException("The " + CONTENT_URI + " is read only");
+    }
+
+    @Override
+    public int update(final Uri uri, final ContentValues values, final String selection,
+        final String[] selectionArgs) {
+        throw new UnsupportedOperationException("The " + CONTENT_URI + " is read only");
+    }
+
+    private void checkColumns(final String[] projection) {
+        final String[] available = { SportTable.COLUMN_NAME, SportTable.COLUMN_DESCRIPTION,
+            SportTable.COLUMN_ID };
+        if (projection != null) {
+            final HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
+            final HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
+            // Check if all columns which are requested are available
+            if (!availableColumns.containsAll(requestedColumns)) {
+                throw new IllegalArgumentException("Unknown columns in projection");
+            }
+        }
+    }
 
 }

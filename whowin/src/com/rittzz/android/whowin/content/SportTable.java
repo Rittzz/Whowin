@@ -6,38 +6,25 @@ import android.util.Log;
 
 import com.rittzz.android.whowin.util.Logging;
 
-public final class GameTable implements DatabaseTable {
+public final class SportTable implements DatabaseTable {
 
-    private static final String LOG_TAG = Logging.makeLogTag(GameTable.class);
+    private static final String LOG_TAG = Logging.makeLogTag(SportTable.class);
 
 	// Database table
-	public static final String TABLE_NAME = "games";
-
+	public static final String TABLE_NAME = "sports";
 	public static final String COLUMN_ID = BaseColumns._ID;
-
-	public static final String SPORT_ID = "sport_id";
-
-	public static final String COLUMN_PLAYER_1_ID = "player_1_id";
-	public static final String COLUMN_PLAYER_2_ID = "player_2_id";
-
-	public static final String COLUMN_PLAYER_1_GAMES = "player_1_games";
-	public static final String COLUMN_PLAYER_2_GAMES = "player_2_games";
-
-	public static final String COLUMN_TIMESTAMP = "timestamp";
+	public static final String COLUMN_NAME = "name";
+	public static final String COLUMN_DESCRIPTION = "description";
 
 	// Database creation SQL statement
 	private static final String DATABASE_CREATE = "create table "
 			+ TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ SPORT_ID + " integer not null, "
-			+ COLUMN_PLAYER_1_ID + " integer not null, "
-			+ COLUMN_PLAYER_2_ID + " integer not null, "
-			+ COLUMN_PLAYER_1_GAMES + " integer not null, "
-			+ COLUMN_PLAYER_2_GAMES + " integer not null, "
-			+ COLUMN_TIMESTAMP + " integer not null"
+			+ COLUMN_NAME + " text not null, "
+			+ COLUMN_DESCRIPTION + " text not null"
 			+ ");";
 
-	GameTable() {}
+	SportTable() {}
 
 	@Override
     public void onCreate(final SQLiteDatabase database) {
