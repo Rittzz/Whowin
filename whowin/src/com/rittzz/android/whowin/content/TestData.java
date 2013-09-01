@@ -65,7 +65,20 @@ public class TestData {
             final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
             Log.d("TestData", "Games for Sport " + sportId);
             while (cursor.moveToNext()) {
-                sportId = cursor.getLong(cursor.getColumnIndexOrThrow(SportTable.COLUMN_ID));
+                Log.d("TestData", "DATA - " + cursorToString(cursor));
+            }
+            cursor.close();
+        }
+
+        Log.d("TestData", "SQL Query Test - " + WhowinData.PlayersJoinedGames.getTableNameForSportId(1));
+
+        // Query the Players for a Sport
+        {
+            final Uri uri = WhowinData.CONTENT_URI.buildUpon().appendPath("sports")
+                .appendPath(Long.toString(sportId)).appendPath("players").build();
+            final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            Log.d("TestData", "Players for Sport " + sportId);
+            while (cursor.moveToNext()) {
                 Log.d("TestData", "DATA - " + cursorToString(cursor));
             }
             cursor.close();

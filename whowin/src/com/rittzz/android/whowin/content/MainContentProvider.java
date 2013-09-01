@@ -100,7 +100,7 @@ public class MainContentProvider extends ContentProvider {
         }
             break;
         case SPORTS_ID_GAME_ID: {
-            final int sportId = Integer.parseInt(uri.getPathSegments().get(2));
+            final int sportId = Integer.parseInt(uri.getPathSegments().get(1));
             final int gameId = Integer.parseInt(uri.getLastPathSegment());
 
             queryBuilder.setTables(GameTable.TABLE_NAME);
@@ -115,10 +115,9 @@ public class MainContentProvider extends ContentProvider {
         }
             break;
         case SPORTS_ID_PLAYERS: {
-            final int sportId = Integer.parseInt(uri.getPathSegments().get(2));
-
-            queryBuilder.setTables(GameTable.TABLE_NAME + ", " + PlayerTable.TABLE_NAME);
-            queryBuilder.appendWhere(GameTable.COLUMN_SPORT_ID + " = " + sportId);
+            final int sportId = Integer.parseInt(uri.getPathSegments().get(1));
+            queryBuilder.setTables(WhowinData.PlayersJoinedGames.getTableNameForSportId(sportId));
+            queryBuilder.setProjectionMap(WhowinData.PlayersJoinedGames.playersJoinedGamesProjectionMap);
         }
             break;
         default:
