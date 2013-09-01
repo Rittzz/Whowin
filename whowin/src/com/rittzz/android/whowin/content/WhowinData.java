@@ -16,34 +16,47 @@ public class WhowinData {
 
     // Special Column names used for tables that are joined
 
-    public final static class SportPlayerGames {
-        private SportPlayerGames() {
+    public final static class SportGames {
+        private SportGames() {
         };
 
-        public static final String _ID = GameTable.COLUMN_ID;
+        static HashMap<String, String> projectionMap = new HashMap<String, String>();
 
-        public static final String PLAYER_1_ID = GameTable.COLUMN_PLAYER_1_ID;
-        public static final String PLAYER_2_ID = GameTable.COLUMN_PLAYER_2_ID;
-
-        public static final String PLAYER_1_NAME = "player_1_name";
-        public static final String PLAYER_2_NAME = "player_2_name";
-
-        public static final String PLAYER_1_GAMES = GameTable.COLUMN_PLAYER_1_GAMES;
-        public static final String PLAYER_2_GAMES = GameTable.COLUMN_PLAYER_2_GAMES;
-
-        public static final String TIMESTAMP = GameTable.COLUMN_TIMESTAMP;
-    }
-
-    public static final class PlayersJoinedGames {
-        private PlayersJoinedGames() {
-        };
-
-        static HashMap<String, String> playersJoinedGamesProjectionMap = new HashMap<String, String>();
+        static final String WHERE_SPORT_ID = "t." + GameTable.COLUMN_SPORT_ID;
 
         static {
-            playersJoinedGamesProjectionMap.put(PlayerTable.COLUMN_ID, "t1."
+            projectionMap.put(GameTable.COLUMN_ID, "t." + GameTable.COLUMN_ID);
+            projectionMap.put(GameTable.COLUMN_SPORT_ID, "t." + GameTable.COLUMN_SPORT_ID);
+
+            projectionMap.put(GameTable.COLUMN_PLAYER_1_ID, "t." + GameTable.COLUMN_PLAYER_1_ID);
+            projectionMap.put(GameTable.COLUMN_PLAYER_2_ID, "t." + GameTable.COLUMN_PLAYER_2_ID);
+
+            projectionMap.put(GameTable.COLUMN_PLAYER_1_GAMES, "t." + GameTable.COLUMN_PLAYER_1_GAMES);
+            projectionMap.put(GameTable.COLUMN_PLAYER_2_GAMES, "t." + GameTable.COLUMN_PLAYER_2_GAMES);
+
+            projectionMap.put(GameTable.COLUMN_PLAYER_1_NAME, "t1." + PlayerTable.COLUMN_NAME + " AS " + GameTable.COLUMN_PLAYER_1_NAME);
+            projectionMap.put(GameTable.COLUMN_PLAYER_2_NAME, "t2." + PlayerTable.COLUMN_NAME + " AS " + GameTable.COLUMN_PLAYER_2_NAME);
+
+            projectionMap.put(GameTable.COLUMN_TIMESTAMP, "t." + GameTable.COLUMN_TIMESTAMP);
+        }
+
+        // Helpers to reduce massive confusion
+        static final String TABLE_NAME = GameTable.TABLE_NAME + " t" + " JOIN "
+            + PlayerTable.TABLE_NAME + " t1 ON t1." + PlayerTable.COLUMN_ID + " = t."
+            + GameTable.COLUMN_PLAYER_1_ID + " JOIN " + PlayerTable.TABLE_NAME + " t2 ON t2."
+            + PlayerTable.COLUMN_ID + " = t." + GameTable.COLUMN_PLAYER_2_ID;
+    }
+
+    public static final class PlayersWithSport {
+        private PlayersWithSport() {
+        };
+
+        static HashMap<String, String> projectionMap = new HashMap<String, String>();
+
+        static {
+            projectionMap.put(PlayerTable.COLUMN_ID, "t1."
                 + PlayerTable.COLUMN_ID);
-            playersJoinedGamesProjectionMap.put(PlayerTable.COLUMN_NAME, "t."
+            projectionMap.put(PlayerTable.COLUMN_NAME, "t."
                 + PlayerTable.COLUMN_NAME);
         }
 

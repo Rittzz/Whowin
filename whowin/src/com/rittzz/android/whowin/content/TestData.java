@@ -70,7 +70,7 @@ public class TestData {
             cursor.close();
         }
 
-        Log.d("TestData", "SQL Query Test - " + WhowinData.PlayersJoinedGames.getTableNameForSportId(1));
+        Log.d("TestData", "SQL Query Test - " + WhowinData.PlayersWithSport.getTableNameForSportId(1));
 
         // Query the Players for a Sport
         {

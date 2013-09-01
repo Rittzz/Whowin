@@ -1,11 +1,10 @@
 // Get player ids and player names
-SELECT t.player_1_id, t.player_2_id, t1.name AS player_1_name, t2.name AS player_2_name, t.player_1_games, t.player_2_games, t.timestamp
+SELECT t._id, t.sport_id, t.player_1_id, t.player_2_id, t1.name AS player_1_name, t2.name AS player_2_name, t.player_1_games, t.player_2_games, t.timestamp
 FROM games t
 JOIN players t1 ON t1._id = t.player_1_id
-JOIN players t2 ON t2._id = t.player_2_id;
+JOIN players t2 ON t2._id = t.player_2_id WHERE t.sport_id = 1;
 
 // Gets all the player ids and names from the games table
 SELECT t.name, t1._id
 FROM players t
-JOIN (SELECT player_1_id AS _id FROM games UNION SELECT player_2_id AS _id FROM games) t1 ON t1._id = t._id;
-
+JOIN (SELECT player_1_id AS _id FROM games WHERE sport_id=1 UNION SELECT player_2_id AS _id FROM games WHERE sport_id=1) t1 ON t1._id = t._id;

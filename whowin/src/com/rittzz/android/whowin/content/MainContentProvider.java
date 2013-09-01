@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
+import com.rittzz.android.whowin.content.WhowinData.SportGames;
 import com.rittzz.android.whowin.util.Logging;
 
 public class MainContentProvider extends ContentProvider {
@@ -95,8 +96,9 @@ public class MainContentProvider extends ContentProvider {
         case SPORTS_ID_GAMES: {
             final int sportId = Integer.parseInt(uri.getPathSegments().get(1));
 
-            queryBuilder.setTables(GameTable.TABLE_NAME);
-            queryBuilder.appendWhere(GameTable.COLUMN_SPORT_ID + " = " + sportId);
+            queryBuilder.setTables(SportGames.TABLE_NAME);
+            queryBuilder.setProjectionMap(SportGames.projectionMap);
+            queryBuilder.appendWhere(SportGames.WHERE_SPORT_ID + " = " + sportId);
         }
             break;
         case SPORTS_ID_GAME_ID: {
@@ -116,8 +118,8 @@ public class MainContentProvider extends ContentProvider {
             break;
         case SPORTS_ID_PLAYERS: {
             final int sportId = Integer.parseInt(uri.getPathSegments().get(1));
-            queryBuilder.setTables(WhowinData.PlayersJoinedGames.getTableNameForSportId(sportId));
-            queryBuilder.setProjectionMap(WhowinData.PlayersJoinedGames.playersJoinedGamesProjectionMap);
+            queryBuilder.setTables(WhowinData.PlayersWithSport.getTableNameForSportId(sportId));
+            queryBuilder.setProjectionMap(WhowinData.PlayersWithSport.projectionMap);
         }
             break;
         default:

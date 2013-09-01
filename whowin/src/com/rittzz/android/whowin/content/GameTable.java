@@ -25,6 +25,10 @@ public final class GameTable implements DatabaseTable {
 
 	public static final String COLUMN_TIMESTAMP = "timestamp";
 
+	// Joined Columns
+	public static final String COLUMN_PLAYER_1_NAME = "player_1_name";
+	public static final String COLUMN_PLAYER_2_NAME = "player_2_name";
+
 	// Database creation SQL statement
 	private static final String DATABASE_CREATE = "create table "
 			+ TABLE_NAME
