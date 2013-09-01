@@ -12,7 +12,7 @@ public class HomeActivity extends SherlockFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        TestData.addGameTableEntries(this);
+        TestData.testDatabase(this);
     }
 
 }

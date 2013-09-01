@@ -20,7 +20,7 @@ public final class PlayerTable implements DatabaseTable {
 	private static final String DATABASE_CREATE = "create table "
 			+ TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_NAME + " unique text not null"
+			+ COLUMN_NAME + " text unique not null"
 			+ ");";
 
 	PlayerTable() {}

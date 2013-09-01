@@ -12,6 +12,7 @@ public final class SportTable implements DatabaseTable {
 
 	// Database table
 	public static final String TABLE_NAME = "sports";
+
 	public static final String COLUMN_ID = BaseColumns._ID;
 	public static final String COLUMN_NAME = "name";
 	public static final String COLUMN_DESCRIPTION = "description";
