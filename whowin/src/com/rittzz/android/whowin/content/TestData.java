@@ -20,13 +20,14 @@ public class TestData {
 
         // Add Test Data
         addTestData(context);
+        addTestData(context);
 
         // Query Test Data
 
         // Get the SportId
         long sportId = -1;
         {
-            final Uri uri = WhowinData.CONTENT_URI.buildUpon().appendPath("sports").build();
+            final Uri uri = WhowinData.SPORTS_CONTENT_URI;
             final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
             Log.d("TestData", "Sports");
             while (cursor.moveToNext()) {
@@ -38,7 +39,7 @@ public class TestData {
 
         // Query the Players
         {
-            final Uri uri = WhowinData.CONTENT_URI.buildUpon().appendPath("players").build();
+            final Uri uri = WhowinData.PLAYERS_CONTENT_URI;
             final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
             Log.d("TestData", "Players");
             while (cursor.moveToNext()) {
@@ -49,7 +50,7 @@ public class TestData {
 
         // Query the Games
         {
-            final Uri uri = WhowinData.CONTENT_URI.buildUpon().appendPath("games").build();
+            final Uri uri = WhowinData.GAMES_CONTENT_URI;
             final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
             Log.d("TestData", "Games");
             while (cursor.moveToNext()) {
@@ -60,8 +61,7 @@ public class TestData {
 
         // Query the Players
         {
-            final Uri uri = WhowinData.CONTENT_URI.buildUpon().appendPath("sports")
-                .appendPath(Long.toString(sportId)).appendPath("games").build();
+            final Uri uri = WhowinData.createSportIdGamesContentUri(sportId);
             final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
             Log.d("TestData", "Games for Sport " + sportId);
             while (cursor.moveToNext()) {
@@ -70,12 +70,9 @@ public class TestData {
             cursor.close();
         }
 
-        Log.d("TestData", "SQL Query Test - " + WhowinData.PlayersWithSport.getTableNameForSportId(1));
-
         // Query the Players for a Sport
         {
-            final Uri uri = WhowinData.CONTENT_URI.buildUpon().appendPath("sports")
-                .appendPath(Long.toString(sportId)).appendPath("players").build();
+            final Uri uri = WhowinData.createSportIdPlayersContentUri(sportId);
             final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
             Log.d("TestData", "Players for Sport " + sportId);
             while (cursor.moveToNext()) {
@@ -84,6 +81,9 @@ public class TestData {
             cursor.close();
         }
     }
+
+    private static int name_counter = 0;
+    private static boolean names_add = false;
 
     public static void addTestData(final Context context) {
         final SQLiteDatabase db = MainDatabaseHelper.getInstance(context).getWritableDatabase();
@@ -96,12 +96,24 @@ public class TestData {
             final long sportId = db.insertOrThrow(SportTable.TABLE_NAME, null, sportValues);
 
             // Then some players
-            final int totalPlayers = 10;
-            final ArrayList<Long> playerIds = new ArrayList<Long>(totalPlayers);
-            for (int i = 0; i < totalPlayers; i++) {
-                final ContentValues values = new ContentValues();
-                values.put(PlayerTable.COLUMN_NAME, "Name " + i);
-                playerIds.add(db.insertOrThrow(PlayerTable.TABLE_NAME, null, values));
+            final ArrayList<Long> playerIds = new ArrayList<Long>();
+            if (!names_add) {
+                final int totalPlayers = 10;
+                for (int i = 0; i < totalPlayers; i++) {
+                    final ContentValues values = new ContentValues();
+                    values.put(PlayerTable.COLUMN_NAME, "Name " + name_counter++);
+                    playerIds.add(db.insertOrThrow(PlayerTable.TABLE_NAME, null, values));
+                }
+                names_add = true;
+            }
+            else {
+                // Query the existing players
+                final String limit = "5";
+                final Cursor cursor = db.query(PlayerTable.TABLE_NAME, new String[] {PlayerTable.COLUMN_ID}, null, null, null, null, null, limit);
+                while (cursor.moveToNext()) {
+                    playerIds.add(cursor.getLong(cursor.getColumnIndexOrThrow(PlayerTable.COLUMN_ID)));
+                }
+                cursor.close();
             }
 
             // Add Games
@@ -165,12 +177,17 @@ public class TestData {
 
     private static String cursorToString(final Cursor cursor) {
         final StringBuilder str = new StringBuilder();
+        str.append('[');
         for (int i = 0; i < cursor.getColumnCount(); i++) {
             final String columnName = cursor.getColumnName(i);
             final String value = cursor.getString(i);
 
             str.append(String.format("'%s'='%s'", columnName, value));
+            if (i < cursor.getColumnCount() - 1) {
+                str.append(", ");
+            }
         }
+        str.append(']');
         return str.toString();
     }
 }

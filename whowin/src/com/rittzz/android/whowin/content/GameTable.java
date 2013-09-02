@@ -17,6 +17,8 @@ public final class GameTable implements DatabaseTable {
 
 	public static final String COLUMN_SPORT_ID = "sport_id";
 
+	public static final String COLUMN_NAME = "name";
+
 	public static final String COLUMN_PLAYER_1_ID = "player_1_id";
 	public static final String COLUMN_PLAYER_2_ID = "player_2_id";
 
@@ -34,6 +36,7 @@ public final class GameTable implements DatabaseTable {
 			+ TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
 			+ COLUMN_SPORT_ID + " integer not null, "
+			+ COLUMN_NAME + " text, "
 			+ COLUMN_PLAYER_1_ID + " integer not null, "
 			+ COLUMN_PLAYER_2_ID + " integer not null, "
 			+ COLUMN_PLAYER_1_GAMES + " integer not null, "

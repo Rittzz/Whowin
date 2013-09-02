@@ -11,7 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
-import com.rittzz.android.whowin.content.WhowinData.SportGames;
+import com.rittzz.android.whowin.content.WhowinData.PlayersWithSport;
 import com.rittzz.android.whowin.util.Logging;
 
 public class MainContentProvider extends ContentProvider {
@@ -26,13 +26,10 @@ public class MainContentProvider extends ContentProvider {
     private static final int SPORTS = 10;
 
     private static final int SPORTS_ID_PLAYERS = 20;
-    private static final int SPORTS_ID_PLAYER_ID = 21;
 
     private static final int GAMES = 30;
     private static final int SPORTS_ID_GAMES = 31;
-    private static final int SPORTS_ID_GAME_ID = 32;
-
-    private static final int SPORTS_ID_STATS = 40;
+    private static final int GAME_ID = 32;
 
     private static final int PLAYERS = 50;
     private static final int PLAYER_ID = 51;
@@ -45,15 +42,12 @@ public class MainContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, "players", PLAYERS);
         sURIMatcher.addURI(AUTHORITY, "games", GAMES);
 
-        sURIMatcher.addURI(AUTHORITY, "player/#", PLAYERS);
+        sURIMatcher.addURI(AUTHORITY, "player/#", PLAYER_ID);
 
         sURIMatcher.addURI(AUTHORITY, "sports/#/players", SPORTS_ID_PLAYERS);
-        sURIMatcher.addURI(AUTHORITY, "sports/#/player/#", SPORTS_ID_PLAYER_ID);
 
         sURIMatcher.addURI(AUTHORITY, "sports/#/games", SPORTS_ID_GAMES);
-        sURIMatcher.addURI(AUTHORITY, "sports/#/game/#", SPORTS_ID_GAME_ID);
-
-        sURIMatcher.addURI(AUTHORITY, "sports/#/stats", SPORTS_ID_STATS);
+        sURIMatcher.addURI(AUTHORITY, "game/#", GAME_ID);
     }
 
     // Database
@@ -84,41 +78,43 @@ public class MainContentProvider extends ContentProvider {
         switch (uriType) {
 
         case SPORTS:
-            queryBuilder.setTables(SportTable.TABLE_NAME);
+            queryBuilder.setTables(WhowinData.Sport.TABLE_NAME);
+            queryBuilder.setProjectionMap(WhowinData.Sport.projectionMap);
             break;
         case PLAYERS:
-            queryBuilder.setTables(PlayerTable.TABLE_NAME);
+            queryBuilder.setTables(WhowinData.Player.TABLE_NAME);
+            queryBuilder.setProjectionMap(WhowinData.Player.projectionMap);
             break;
         case GAMES:
-            queryBuilder.setTables(GameTable.TABLE_NAME);
+            queryBuilder.setTables(WhowinData.Game.TABLE_NAME);
+            queryBuilder.setProjectionMap(WhowinData.Game.projectionMap);
             break;
-
         case SPORTS_ID_GAMES: {
             final int sportId = Integer.parseInt(uri.getPathSegments().get(1));
 
-            queryBuilder.setTables(SportGames.TABLE_NAME);
-            queryBuilder.setProjectionMap(SportGames.projectionMap);
-            queryBuilder.appendWhere(SportGames.WHERE_SPORT_ID + " = " + sportId);
+            queryBuilder.setTables(WhowinData.Game.TABLE_NAME);
+            queryBuilder.setProjectionMap(WhowinData.Game.projectionMap);
+            queryBuilder.appendWhere(WhowinData.Game.SPORT_ID + " = " + sportId);
         }
             break;
-        case SPORTS_ID_GAME_ID: {
-            final int sportId = Integer.parseInt(uri.getPathSegments().get(1));
+        case GAME_ID: {
             final int gameId = Integer.parseInt(uri.getLastPathSegment());
 
-            queryBuilder.setTables(GameTable.TABLE_NAME);
-            queryBuilder.appendWhere(GameTable.COLUMN_SPORT_ID + " = " + sportId);
+            queryBuilder.setTables(WhowinData.Game.TABLE_NAME);
+            queryBuilder.setProjectionMap(WhowinData.Game.projectionMap);
             queryBuilder.appendWhere(GameTable.COLUMN_ID + " = " + gameId);
         }
         case PLAYER_ID: {
             final int playerId = Integer.parseInt(uri.getLastPathSegment());
-
-            queryBuilder.setTables(PlayerTable.TABLE_NAME);
+            queryBuilder.setTables(WhowinData.Player.TABLE_NAME);
+            queryBuilder.setProjectionMap(WhowinData.Player.projectionMap);
             queryBuilder.appendWhere(PlayerTable.COLUMN_ID + " = " + playerId);
         }
             break;
         case SPORTS_ID_PLAYERS: {
             final int sportId = Integer.parseInt(uri.getPathSegments().get(1));
-            queryBuilder.setTables(WhowinData.PlayersWithSport.getTableNameForSportId(sportId));
+
+            queryBuilder.setTables(PlayersWithSport.getTableNameForSportId(sportId));
             queryBuilder.setProjectionMap(WhowinData.PlayersWithSport.projectionMap);
         }
             break;
