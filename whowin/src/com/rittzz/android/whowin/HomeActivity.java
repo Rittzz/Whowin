@@ -2,12 +2,12 @@ package com.rittzz.android.whowin;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import com.rittzz.android.whowin.fragment.SportListFragment;
 
-public class HomeActivity extends SherlockFragmentActivity {
+public class HomeActivity extends BaseActivity implements SportListFragment.ItemClickListener {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -29,8 +29,7 @@ public class HomeActivity extends SherlockFragmentActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        // TODO Auto-generated method stub
-        return super.onOptionsItemSelected(item);
+    public void onItemClick(final long sportId) {
+        Toast.makeText(this, "Clicked Id " + sportId, Toast.LENGTH_SHORT).show();
     }
 }

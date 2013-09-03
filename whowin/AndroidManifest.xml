@@ -36,6 +36,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.rittzz.android.whowin.HomeActivity" />
         </activity>
+        <activity
+            android:name="com.rittzz.android.whowin.AddSportActivity"
+            android:label="@string/title_activity_add_sport"
+            android:parentActivityName="com.rittzz.android.whowin.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.rittzz.android.whowin.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -7,5 +7,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_add_sport">Add Sport</string>
     <string name="no_sports">No Sports</string>
+    <string name="title_activity_add_sport">AddSportActivity</string>
 
 </resources>

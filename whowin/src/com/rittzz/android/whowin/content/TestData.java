@@ -28,7 +28,7 @@ public class TestData {
         long sportId = -1;
         {
             final Uri uri = WhowinData.SPORTS_CONTENT_URI;
-            final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            final Cursor cursor = context.getContentResolver().query(uri, null, null, null, WhowinData.Sport.NAME + " ASC");
             Log.d("TestData", "Sports");
             while (cursor.moveToNext()) {
                 sportId = cursor.getLong(cursor.getColumnIndexOrThrow(SportTable.COLUMN_ID));
