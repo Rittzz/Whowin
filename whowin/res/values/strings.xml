@@ -8,5 +8,9 @@
     <string name="action_add_sport">Add Sport</string>
     <string name="no_sports">No Sports</string>
     <string name="title_activity_add_sport">AddSportActivity</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="add">Add</string>
+    <string name="adding_dot_dot_dot">Adding...</string>
 
 </resources>

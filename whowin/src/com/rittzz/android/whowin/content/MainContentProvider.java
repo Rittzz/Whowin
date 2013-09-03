@@ -68,7 +68,7 @@ public class MainContentProvider extends ContentProvider {
 
         // Using SQLiteQueryBuilder instead of query() method
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        final SQLiteDatabase db = database.getWritableDatabase();
+        final SQLiteDatabase db = database.getReadableDatabase();
 
         if (Build.VERSION.SDK_INT >= 14) {
             queryBuilder.setStrict(true);
@@ -76,7 +76,6 @@ public class MainContentProvider extends ContentProvider {
 
         final int uriType = sURIMatcher.match(uri);
         switch (uriType) {
-
         case SPORTS:
             queryBuilder.setTables(WhowinData.Sport.TABLE_NAME);
             queryBuilder.setProjectionMap(WhowinData.Sport.projectionMap);
@@ -141,7 +140,25 @@ public class MainContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(final Uri uri, final ContentValues values) {
-        throw new UnsupportedOperationException("The " + CONTENT_URI + " is read only");
+        final SQLiteDatabase db = database.getWritableDatabase();
+
+        final int uriType = sURIMatcher.match(uri);
+        long id = -1;
+        switch (uriType) {
+        case SPORTS:
+            id = db.insert(WhowinData.Sport.TABLE_NAME, null, values);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown URI: " + uri);
+        }
+
+        if (id >= 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+            return CONTENT_URI;
+        }
+        else {
+            return null;
+        }
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.rittzz.android.whowin.content.MainDatabaseHelper;
 import com.rittzz.android.whowin.content.TestData;
+import com.rittzz.android.whowin.content.WhowinData;
 
 public class SettingsActivity extends SherlockPreferenceActivity {
 
@@ -45,7 +46,8 @@ public class SettingsActivity extends SherlockPreferenceActivity {
         findPreference("erase_data").setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(final Preference preference) {
-                deleteDatabase(MainDatabaseHelper.DATABASE_NAME);
+                MainDatabaseHelper.getInstance(getApplication()).reset();
+                getContentResolver().notifyChange(WhowinData.CONTENT_URI, null);
                 Toast.makeText(getApplication(), "Data Cleared", Toast.LENGTH_SHORT).show();
                 return true;
             }
@@ -55,6 +57,7 @@ public class SettingsActivity extends SherlockPreferenceActivity {
             @Override
             public boolean onPreferenceClick(final Preference preference) {
                 TestData.testDatabase(getApplication());
+                getContentResolver().notifyChange(WhowinData.CONTENT_URI, null);
                 Toast.makeText(getApplication(), "Test Complete", Toast.LENGTH_SHORT).show();
                 return true;
             }

@@ -93,6 +93,7 @@ public class SportListFragment extends SherlockFragment implements AdapterView.O
                 loadingView.setVisibility(View.INVISIBLE);
 
                 if (cursor.getCount() > 0) {
+                    emptyView.setVisibility(View.INVISIBLE);
                     listView.setVisibility(View.VISIBLE);
 
                     SportListFragment.this.cursor = cursor;
@@ -108,10 +109,20 @@ public class SportListFragment extends SherlockFragment implements AdapterView.O
             public void onLoaderReset(final Loader<Cursor> loader) {
                 // Clear the data.
                 SportListFragment.this.cursor = null;
-                listView.setAdapter(null);
+                listView.setVisibility(View.INVISIBLE);
+                loadingView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.INVISIBLE);
             }
         };
         getLoaderManager().initLoader(0, null, loaderCallback);
+
+        getView().findViewById(R.id.add_sport_view).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                final Intent intent = new Intent(getActivity(), AddSportActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 

@@ -38,4 +38,10 @@ public final class PlayerTable implements DatabaseTable {
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(database);
 	}
+
+	@Override
+    public void onReset(final SQLiteDatabase database) {
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(database);
+    }
 }

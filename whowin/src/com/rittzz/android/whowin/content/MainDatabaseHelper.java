@@ -34,6 +34,15 @@ public class MainDatabaseHelper extends SQLiteOpenHelper {
 		tables.add(new GameTable());
 	}
 
+	/**
+	 * Resets the entire database and wipes all the data.
+	 */
+	public void reset() {
+	    for (final DatabaseTable table : tables) {
+            table.onReset(getWritableDatabase());
+        }
+	}
+
 	@Override
 	public void onCreate(final SQLiteDatabase database) {
 		for (final DatabaseTable table : tables) {

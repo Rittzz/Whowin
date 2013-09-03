@@ -16,11 +16,11 @@ import android.util.Pair;
 public class TestData {
     public static void testDatabase(final Context context) {
         // Reset Database
-        context.deleteDatabase(MainDatabaseHelper.DATABASE_NAME);
+        MainDatabaseHelper.getInstance(context).reset();
 
         // Add Test Data
-        addTestData(context);
-        addTestData(context);
+        addTestData(context, "Pool");
+        addTestData(context, "Fooseball");
 
         // Query Test Data
 
@@ -85,13 +85,13 @@ public class TestData {
     private static int name_counter = 0;
     private static boolean names_add = false;
 
-    public static void addTestData(final Context context) {
+    public static void addTestData(final Context context, final String sportName) {
         final SQLiteDatabase db = MainDatabaseHelper.getInstance(context).getWritableDatabase();
         db.beginTransaction();
         try {
             // A Sport first
             final ContentValues sportValues = new ContentValues();
-            sportValues.put(SportTable.COLUMN_NAME, "Pool");
+            sportValues.put(SportTable.COLUMN_NAME, sportName);
             sportValues.put(SportTable.COLUMN_DESCRIPTION, "The awesome soundhound pool stats");
             final long sportId = db.insertOrThrow(SportTable.TABLE_NAME, null, sportValues);
 

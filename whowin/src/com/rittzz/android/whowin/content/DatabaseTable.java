@@ -8,4 +8,6 @@ interface DatabaseTable {
 
     public abstract void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion);
 
+    public abstract void onReset(SQLiteDatabase database);
+
 }

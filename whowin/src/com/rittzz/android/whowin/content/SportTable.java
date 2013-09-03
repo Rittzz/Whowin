@@ -21,7 +21,7 @@ public final class SportTable implements DatabaseTable {
 	private static final String DATABASE_CREATE = "create table "
 			+ TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_NAME + " text not null, "
+			+ COLUMN_NAME + " text unique not null, "
 			+ COLUMN_DESCRIPTION + " text not null"
 			+ ");";
 
@@ -40,4 +40,10 @@ public final class SportTable implements DatabaseTable {
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(database);
 	}
+
+	@Override
+    public void onReset(final SQLiteDatabase database) {
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(database);
+    }
 }

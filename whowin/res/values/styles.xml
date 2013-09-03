@@ -6,17 +6,27 @@
     -->
     <style name="AppBaseTheme" parent="Theme.Sherlock">
         <item name="actionBarStyle">@style/Widget.Styled.ActionBar</item>
-	    <item name="android:actionBarStyle" tools:targetApi="11">@style/Widget.Styled.ActionBar</item>
+        <item name="android:actionBarStyle" tools:targetApi="11">@style/Widget.Styled.ActionBar</item>
     </style>
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+
+    <!-- Action Bar -->
+    <style name="Widget.Styled.ActionBar" parent="Widget.Sherlock.ActionBar.Solid">
+        <!-- Empty for now -->
+    </style>
+
+    <!-- Activity -->
+    <style name="AddSportActivity" parent="AppTheme">
+        <!-- Empty -->
+    </style>
     
-	<!-- Action Bar -->
-	<style name="Widget.Styled.ActionBar" parent="Widget.Sherlock.ActionBar.Solid" >
-	    <!-- Empty for now -->
-	</style>
+    <!-- General -->
+    <style name="FormHeader" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
 
 </resources>

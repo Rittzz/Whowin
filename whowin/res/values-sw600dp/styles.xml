@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Activity -->
+    <style name="AddSportActivity" parent="@android:style/Theme.Dialog">
+        <!-- Empty -->
+    </style>
+
+</resources>
