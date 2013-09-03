@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class HomeActivity extends SherlockFragmentActivity {
 
@@ -25,5 +26,11 @@ public class HomeActivity extends SherlockFragmentActivity {
     public boolean onPrepareOptionsMenu(final Menu menu) {
         menu.findItem(R.id.action_settings).setIntent(new Intent(this, SettingsActivity.class));
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        // TODO Auto-generated method stub
+        return super.onOptionsItemSelected(item);
     }
 }

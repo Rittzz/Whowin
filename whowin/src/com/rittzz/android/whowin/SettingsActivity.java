@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.rittzz.android.whowin.content.MainDatabaseHelper;
 import com.rittzz.android.whowin.content.TestData;
 
 public class SettingsActivity extends SherlockPreferenceActivity {
@@ -40,6 +41,15 @@ public class SettingsActivity extends SherlockPreferenceActivity {
 
     private void setupSimplePreferencesScreen() {
         addPreferencesFromResource(R.xml.pref_general);
+
+        findPreference("erase_data").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(final Preference preference) {
+                deleteDatabase(MainDatabaseHelper.DATABASE_NAME);
+                Toast.makeText(getApplication(), "Data Cleared", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
 
         findPreference("test_data").setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override

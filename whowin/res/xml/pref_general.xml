@@ -1,9 +1,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <Preference
-        android:defaultValue="true"
-        android:key="test_data"
-        android:summary="WARANING, this will delete all your data"
-        android:title="Test Database" />
+    <PreferenceCategory android:title="Development" >
+        <Preference
+            android:key="erase_data"
+            android:summary="WARANING, this will delete all your data"
+            android:title="Clear All" />
+        
+        <Preference
+            android:key="test_data"
+            android:summary="WARNING, this will delete all your data"
+            android:title="Test Database" />
+    </PreferenceCategory>
 
 </PreferenceScreen>
