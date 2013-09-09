@@ -83,7 +83,7 @@ public class SportListFragment extends SherlockFragment implements AdapterView.O
             @Override
             public Loader<Cursor> onCreateLoader(final int loaderId, final Bundle bundle) {
                 final Uri uri = WhowinData.SPORTS_CONTENT_URI;
-                final String[] projection = new String[] { WhowinData.Sport._ID, WhowinData.Sport.NAME };
+                final String[] projection = new String[] { WhowinData.Sport._ID, WhowinData.Sport.NAME, WhowinData.Sport.DESCRIPTION };
 
                 return new CursorLoader(getActivity(), uri, projection, null, null, WhowinData.Sport.NAME + " ASC");
             }
@@ -131,7 +131,10 @@ public class SportListFragment extends SherlockFragment implements AdapterView.O
         if (cursor != null) {
             cursor.moveToPosition(position);
             final long sportId = cursor.getLong(cursor.getColumnIndexOrThrow(WhowinData.Sport._ID));
-            clickListener.onItemClick(sportId);
+            final String name = cursor.getString(cursor.getColumnIndexOrThrow(WhowinData.Sport.NAME));
+            final String description = cursor.getString(cursor.getColumnIndexOrThrow(WhowinData.Sport.DESCRIPTION));
+
+            clickListener.onItemClick(sportId, name, description);
         }
     }
 
@@ -146,17 +149,20 @@ public class SportListFragment extends SherlockFragment implements AdapterView.O
         public void bindView(final View item, final Context ctx, final Cursor cursor) {
             final TextView tv = (TextView)item.findViewById(android.R.id.text1);
             tv.setText(cursor.getString(cursor.getColumnIndexOrThrow(WhowinData.Sport.NAME)));
+
+            final TextView tv2 = (TextView)item.findViewById(android.R.id.text2);
+            tv2.setText(cursor.getString(cursor.getColumnIndexOrThrow(WhowinData.Sport.DESCRIPTION)));
         }
 
         @Override
         public View newView(final Context ctx, final Cursor cursor, final ViewGroup parent) {
             final LayoutInflater inflater = getActivity().getLayoutInflater();
-            return inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            return inflater.inflate(android.R.layout.simple_list_item_2, parent, false);
         }
 
     }
 
     public interface ItemClickListener {
-        public void onItemClick(final long sportId);
+        public void onItemClick(final long sportId, final String name, final String description);
     }
 }

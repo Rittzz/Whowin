@@ -8,3 +8,26 @@ JOIN players t2 ON t2._id = t.player_2_id WHERE t.sport_id = 1;
 SELECT t.name, t1._id
 FROM players t
 JOIN (SELECT player_1_id AS _id FROM games WHERE sport_id=1 UNION SELECT player_2_id AS _id FROM games WHERE sport_id=1) t1 ON t1._id = t._id;
+
+
+select player_1_id, player_1_games from games where sport_id = 1 group by player_1_id;
+
+SELECT MAX(player_1_games, player_2_games) as max from games;
+
+SELECT CASE WHEN player_1_games > player_2_games
+    THEN player_1_id
+    ELSE player_2_id END AS player_id
+FROM games;
+
+SELECT player_id, SUM(player_wins)
+FROM
+(SELECT
+    CASE WHEN player_1_games > player_2_games THEN player_1_id ELSE player_2_id END AS player_id,
+    CASE WHEN player_1_games > player_2_games THEN 1 ELSE 1 END AS player_wins
+FROM games WHERE sport_id=1)
+GROUP BY player_id;
+
+SELECT t._id, t.sport_id, t.player_1_id, t.player_2_id, t1.name AS player_1_name, t2.name AS player_2_name, t.player_1_games, t.player_2_games, t.timestamp
+FROM games t
+JOIN players t1 ON t1._id = t.player_1_id
+JOIN players t2 ON t2._id = t.player_2_id WHERE t.sport_id = 1;

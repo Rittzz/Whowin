@@ -29,7 +29,9 @@ public class HomeActivity extends BaseActivity implements SportListFragment.Item
     }
 
     @Override
-    public void onItemClick(final long sportId) {
+    public void onItemClick(final long sportId, final String name, final String description) {
         Toast.makeText(this, "Clicked Id " + sportId, Toast.LENGTH_SHORT).show();
+
+        startActivity(SportActivity.makeIntent(this, sportId, name, description));
     }
 }

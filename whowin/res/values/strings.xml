@@ -12,5 +12,7 @@
     <string name="description">Description</string>
     <string name="add">Add</string>
     <string name="adding_dot_dot_dot">Adding...</string>
+    <string name="action_add_game">Add Game</string>
+    <string name="title_activity_sport">SportActivity</string>
 
 </resources>
