@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.util.Log;
 import android.util.Pair;
 
+import com.rittzz.android.whowin.content.WhowinData.Player;
+
 public class TestData {
     public static void testDatabase(final Context context) {
         // Reset Database
@@ -77,6 +79,19 @@ public class TestData {
             Log.d("TestData", "Players for Sport " + sportId);
             while (cursor.moveToNext()) {
                 Log.d("TestData", "DATA - " + cursorToString(cursor));
+            }
+            cursor.close();
+        }
+
+        // Query the Player Wins for Sport
+        {
+            final Uri uri = WhowinData.createSportIdPlayersWinsContentUri(sportId);
+            final String[] projection = new String[] {Player._ID, Player.NAME, Player.WINS};
+            final Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            Log.d("TestData", "Players Wins for Sport " + sportId);
+            while (cursor.moveToNext()) {
+                Log.d("TestData", "DATA - " + cursorToString(cursor));
+                Log.d("TestData", "Player Name " + cursor.getString(cursor.getColumnIndexOrThrow(Player.NAME)));
             }
             cursor.close();
         }

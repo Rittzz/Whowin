@@ -37,6 +37,7 @@ public class WhowinData {
 
         public static final String _ID = "_id";
         public static final String NAME = "name";
+        public static final String WINS = "wins";
 
         static final String TABLE_NAME = SportTable.TABLE_NAME;
         static final HashMap<String, String> projectionMap = new HashMap<String, String>();
@@ -92,40 +93,6 @@ public class WhowinData {
         }
     }
 
-    // Special Column names used for tables that are joined
-
-//    public final static class SportGames {
-//        private SportGames() {};
-//
-//        static HashMap<String, String> projectionMap = new HashMap<String, String>();
-//
-//        static final String WHERE_SPORT_ID = "t." + GameTable.COLUMN_SPORT_ID;
-//        static {
-//            projectionMap.put(GameTable.COLUMN_ID, "t." + GameTable.COLUMN_ID);
-//            projectionMap.put(GameTable.COLUMN_SPORT_ID, "t." + GameTable.COLUMN_SPORT_ID);
-//
-//            projectionMap.put(GameTable.COLUMN_PLAYER_1_ID, "t." + GameTable.COLUMN_PLAYER_1_ID);
-//            projectionMap.put(GameTable.COLUMN_PLAYER_2_ID, "t." + GameTable.COLUMN_PLAYER_2_ID);
-//
-//            projectionMap.put(GameTable.COLUMN_PLAYER_1_GAMES, "t." + GameTable.COLUMN_PLAYER_1_GAMES);
-//            projectionMap.put(GameTable.COLUMN_PLAYER_2_GAMES, "t." + GameTable.COLUMN_PLAYER_2_GAMES);
-//
-//            projectionMap.put(GameTable.COLUMN_PLAYER_1_NAME, "t1." + PlayerTable.COLUMN_NAME + " AS " + GameTable.COLUMN_PLAYER_1_NAME);
-//            projectionMap.put(GameTable.COLUMN_PLAYER_2_NAME, "t2." + PlayerTable.COLUMN_NAME + " AS " + GameTable.COLUMN_PLAYER_2_NAME);
-//
-//            projectionMap.put(GameTable.COLUMN_TIMESTAMP, "t." + GameTable.COLUMN_TIMESTAMP);
-//        }
-//
-//        // Helpers to reduce massive confusion
-//        static final String TABLE_NAME = GameTable.TABLE_NAME;
-//
-//        // Helpers to reduce massive confusion
-//        static final String JOINED_TABLE_NAME = GameTable.TABLE_NAME + " t" + " JOIN "
-//            + PlayerTable.TABLE_NAME + " t1 ON t1." + PlayerTable.COLUMN_ID + " = t."
-//            + GameTable.COLUMN_PLAYER_1_ID + " JOIN " + PlayerTable.TABLE_NAME + " t2 ON t2."
-//            + PlayerTable.COLUMN_ID + " = t." + GameTable.COLUMN_PLAYER_2_ID;
-//    }
-
     public static final class PlayersWithSport {
         private PlayersWithSport() {
         };
@@ -156,6 +123,45 @@ public class WhowinData {
         }
     }
 
+    public static final class SportPlayerWins {
+        private SportPlayerWins() {
+        };
+
+        static HashMap<String, String> projectionMap = new HashMap<String, String>();
+
+        static {
+            projectionMap.put(Player._ID, "t4.player_id AS " + Player._ID);
+            projectionMap.put(Player.NAME, "t4.player_name AS " + Player.NAME);
+            projectionMap.put(Player.WINS, "COALESCE(player_wins, 0) AS " + Player.WINS);
+        }
+
+        // Helpers to reduce confusion
+        private static final String TABLE_NAME = "(" +
+        		"SELECT t.name as player_name, t1._id as player_id " +
+        		"FROM players t " +
+        		"JOIN (SELECT player_1_id AS _id FROM games WHERE sport_id=%1$d UNION SELECT player_2_id AS _id FROM games WHERE sport_id=%1$d) t1 ON t1._id = t._id " +
+        		") t4 " +
+        		"LEFT JOIN " +
+        		"( " +
+        		"SELECT player_id, SUM(player_wins) as player_wins " +
+        		"FROM " +
+        		" " +
+        		"( " +
+        		"SELECT " +
+        		"    CASE WHEN player_1_games > player_2_games THEN player_1_id ELSE player_2_id END AS player_id, " +
+        		"    CASE WHEN player_1_games > player_2_games THEN 1 ELSE 1 END AS player_wins " +
+        		"FROM games WHERE sport_id=%1$d " +
+        		")" +
+        		"GROUP BY player_id " +
+        		") t " +
+        		"" +
+        		"ON t4.player_id = t.player_id";
+
+        static String getTableNameForSportId(final long sportId) {
+            return String.format(Locale.US, TABLE_NAME, sportId);
+        }
+    }
+
     public static Uri SPORTS_CONTENT_URI = Uri.parse(RAW_CONTENT_URI + "/sports" );
     public static Uri PLAYERS_CONTENT_URI = Uri.parse(RAW_CONTENT_URI + "/players" );
     public static Uri GAMES_CONTENT_URI = Uri.parse(RAW_CONTENT_URI + "/games" );
@@ -182,5 +188,10 @@ public class WhowinData {
     public static Uri createSportIdGameIdContentUri(final long sportId, final long gameId) {
         return SPORTS_CONTENT_URI.buildUpon().appendPath(Long.toString(sportId))
             .appendPath("game").appendPath(Long.toString(gameId)).build();
+    }
+
+    public static Uri createSportIdPlayersWinsContentUri(final long sportId) {
+        return SPORTS_CONTENT_URI.buildUpon().appendPath(Long.toString(sportId))
+            .appendPath("players").appendPath("wins").build();
     }
 }

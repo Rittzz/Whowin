@@ -7,7 +7,7 @@ JOIN players t2 ON t2._id = t.player_2_id WHERE t.sport_id = 1;
 // Gets all the player ids and names from the games table
 SELECT t.name, t1._id
 FROM players t
-JOIN (SELECT player_1_id AS _id FROM games WHERE sport_id=1 UNION SELECT player_2_id AS _id FROM games WHERE sport_id=1) t1 ON t1._id = t._id;
+JOIN (SELECT player_1_id AS _id FROM games WHERE sport_id=2 UNION SELECT player_2_id AS _id FROM games WHERE sport_id=2) t1 ON t1._id = t._id;
 
 
 select player_1_id, player_1_games from games where sport_id = 1 group by player_1_id;
@@ -19,15 +19,53 @@ SELECT CASE WHEN player_1_games > player_2_games
     ELSE player_2_id END AS player_id
 FROM games;
 
-SELECT player_id, SUM(player_wins)
+// GetPlayerWinsForSport
+// Returns every players win count for a given sport
+// Start
+SELECT t4.player_name as name, t4.player_id as player_id, COALESCE(player_wins, 0) as player_wins FROM
+
+(
+SELECT t.name as player_name, t1._id as player_id
+FROM players t
+JOIN (SELECT player_1_id AS _id FROM games WHERE sport_id=1 UNION SELECT player_2_id AS _id FROM games WHERE sport_id=1) t1 ON t1._id = t._id
+) t4 
+
+LEFT JOIN 
+
+(
+SELECT player_id, SUM(player_wins) as player_wins
 FROM
-(SELECT
+
+(
+SELECT
     CASE WHEN player_1_games > player_2_games THEN player_1_id ELSE player_2_id END AS player_id,
     CASE WHEN player_1_games > player_2_games THEN 1 ELSE 1 END AS player_wins
-FROM games WHERE sport_id=1)
-GROUP BY player_id;
+FROM games WHERE sport_id=1
+)
+GROUP BY player_id
+) t
+
+ON t4.player_id = t.player_id
+
+ORDER BY player_wins DESC;
+// End
 
 SELECT t._id, t.sport_id, t.player_1_id, t.player_2_id, t1.name AS player_1_name, t2.name AS player_2_name, t.player_1_games, t.player_2_games, t.timestamp
 FROM games t
 JOIN players t1 ON t1._id = t.player_1_id
 JOIN players t2 ON t2._id = t.player_2_id WHERE t.sport_id = 1;
+
+select player_1_id, player_1_games, player_2_id, player_2_games from games where sport_id = 1;
+
+player_1_id|player_1_games|player_2_id|player_2_games
+10|3|4|1    10
+3|2|8|5     8
+7|3|6|1     7
+4|1|2|4     2
+2|0|10|3    10
+9|3|1|0     9
+7|5|8|3     7
+5|1|8|3     8
+7|5|5|0     7
+1|0|3|3     3
+

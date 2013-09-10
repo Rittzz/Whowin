@@ -29,7 +29,9 @@ public class MainContentProvider extends ContentProvider {
 
     private static final int GAMES = 30;
     private static final int SPORTS_ID_GAMES = 31;
-    private static final int GAME_ID = 32;
+    private static final int SPORTS_PLAYER_WINS = 32;
+
+    private static final int GAME_ID = 33;
 
     private static final int PLAYERS = 50;
     private static final int PLAYER_ID = 51;
@@ -45,8 +47,9 @@ public class MainContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, "player/#", PLAYER_ID);
 
         sURIMatcher.addURI(AUTHORITY, "sports/#/players", SPORTS_ID_PLAYERS);
-
         sURIMatcher.addURI(AUTHORITY, "sports/#/games", SPORTS_ID_GAMES);
+        sURIMatcher.addURI(AUTHORITY, "sports/#/players/wins", SPORTS_PLAYER_WINS);
+
         sURIMatcher.addURI(AUTHORITY, "game/#", GAME_ID);
     }
 
@@ -94,6 +97,12 @@ public class MainContentProvider extends ContentProvider {
             queryBuilder.setTables(WhowinData.Game.TABLE_NAME);
             queryBuilder.setProjectionMap(WhowinData.Game.projectionMap);
             queryBuilder.appendWhere(WhowinData.Game.SPORT_ID + " = " + sportId);
+        }
+            break;
+        case SPORTS_PLAYER_WINS: {
+            final int sportId = Integer.parseInt(uri.getPathSegments().get(1));
+            queryBuilder.setTables(WhowinData.SportPlayerWins.getTableNameForSportId(sportId));
+            queryBuilder.setProjectionMap(WhowinData.SportPlayerWins.projectionMap);
         }
             break;
         case GAME_ID: {
